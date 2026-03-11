@@ -1,227 +1,250 @@
 <!DOCTYPE html>
 <html>
 <head>
-<meta charset="UTF-8">
-<title>KPI Dashboard</title>
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-
-<style>
-body{
-  font-family: system-ui, -apple-system, sans-serif;
-  background:#f6f7fb;
-  margin:0;
-  padding:24px;
-  color:#111;
-}
-.container{
-  max-width:1100px;
-  margin:auto;
-}
-h1{margin-bottom:4px;}
-.subtitle{color:#666;margin-bottom:30px;}
-
-.cards{
-  display:grid;
-  grid-template-columns:repeat(auto-fit,minmax(180px,1fr));
-  gap:16px;
-  margin-bottom:30px;
-}
-.card{
-  background:white;
-  padding:18px;
-  border-radius:12px;
-  box-shadow:0 2px 6px rgba(0,0,0,0.06);
-}
-.card .label{font-size:13px;color:#666}
-.card .value{font-size:24px;font-weight:700;margin-top:6px}
-
-.charts{
-  display:grid;
-  grid-template-columns:repeat(auto-fit, minmax(300px,1fr));
-  gap:24px;
-  margin-bottom:24px;
-}
-@media(max-width:900px){
-  .charts{
-    grid-template-columns:1fr;
-  }
-}
-canvas{
-  max-width:100%;
-  width:100%;
-  height:280px;
-  box-sizing:border-box;
-}
-
-.section{
-  background:white;
-  padding:18px;
-  border-radius:12px;
-  margin-bottom:24px;
-  box-shadow:0 2px 6px rgba(0,0,0,0.06);
-}
-
-table{
-  width:100%;
-  border-collapse:collapse;
-}
-th,td{
-  padding:10px;
-  border-bottom:1px solid #eee;
-  text-align:left;
-  font-size:14px;
-}
-th{color:#666;font-weight:600;}
-
-.footer{
-  text-align:center;
-  margin-top:30px;
-  color:#999;
-  font-size:12px;
-}
-</style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Security Alert Report</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Arial, sans-serif;
+            line-height: 1.6;
+            margin: 0;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        .header {
+            background: #dc3545;
+            color: white;
+            padding: 15px 20px;
+            border-radius: 8px 8px 0 0;
+        }
+        .header h2 {
+            margin: 0;
+            font-size: 20px;
+        }
+        .content {
+            background: white;
+            padding: 20px;
+            border-radius: 0 0 8px 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .ip-box {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 6px;
+            font-family: monospace;
+            font-size: 28px;
+            font-weight: bold;
+            color: #dc3545;
+            text-align: center;
+            border: 2px solid #dee2e6;
+            margin: 15px 0;
+        }
+        .section {
+            margin-bottom: 25px;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 6px;
+        }
+        .section-title {
+            font-weight: bold;
+            color: #495057;
+            margin-bottom: 15px;
+            font-size: 16px;
+            text-transform: uppercase;
+            border-bottom: 2px solid #dee2e6;
+            padding-bottom: 8px;
+        }
+        .uri-item {
+            background: #1e1e2f;
+            color: #00ff9d;
+            padding: 8px 12px;
+            margin-bottom: 4px;
+            border-radius: 4px;
+            font-family: monospace;
+            font-size: 13px;
+        }
+        .info-row {
+            display: flex;
+            margin-bottom: 8px;
+            padding: 8px;
+            background: white;
+            border-radius: 4px;
+        }
+        .info-label {
+            font-weight: bold;
+            width: 120px;
+            color: #495057;
+        }
+        .info-value {
+            color: #212529;
+        }
+        .report-item {
+            background: white;
+            padding: 12px;
+            margin-bottom: 10px;
+            border-radius: 4px;
+            border-left: 4px solid #dc3545;
+        }
+        .report-date {
+            color: #6c757d;
+            font-size: 12px;
+            margin-bottom: 5px;
+        }
+        .report-comment {
+            font-weight: bold;
+            margin-bottom: 8px;
+        }
+        .category-badge {
+            display: inline-block;
+            background: #17a2b8;
+            color: white;
+            padding: 2px 8px;
+            border-radius: 12px;
+            font-size: 11px;
+            margin-right: 4px;
+        }
+        .stats {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+        .stat-box {
+            flex: 1;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 15px;
+            text-align: center;
+            border-radius: 6px;
+            color: white;
+        }
+        .stat-number {
+            font-size: 28px;
+            font-weight: bold;
+        }
+        .stat-label {
+            font-size: 12px;
+            opacity: 0.9;
+            text-transform: uppercase;
+        }
+        .footer {
+            margin-top: 20px;
+            text-align: center;
+            color: #6c757d;
+            font-size: 12px;
+            padding-top: 15px;
+            border-top: 1px solid #dee2e6;
+        }
+        .score-high {
+    		background: #dc3545;
+   		 color: white;
+	}
+	.score-medium {
+  		background: #ffc107;
+    		color: #212529;
+	}
+	.score-low {
+    		background: #28a745;
+    		color: white;
+	}
+	.abuse-score {
+    		display: inline-block;
+    		padding: 3px 10px;
+    		border-radius: 20px;
+    		font-size: 14px;
+    		font-weight: bold;
+	}
+    </style>
 </head>
-
 <body>
-<div class="container">
+    <div class="container">
+        <div class="header">
+            <h2>⚠️ SECURITY ALERT: Suspicious Activity Detected</h2>
+        </div>
+        
+        <div class="content">
+            <!-- Quick Stats -->
+            <div class="stats">
+                <div class="stat-box">
+                    <div class="stat-number">0</div>
+                    <div class="stat-label">Total Reports</div>
+                </div>
+                <div class="info-row">
+    			<span class="info-label">Abuse Score:</span>
+    			<span class="info-value">
+        			<span class="abuse-score score-low">0/100</span>
+    			</span>
+		</div>
+                <div class="stat-box">
+                    <div class="stat-number">0</div>
+                    <div class="stat-label">Recent Reports</div>
+                </div>
+            </div>
+            
+            <!-- IP Address -->
+            <div class="section">
+                <div class="section-title">📍 SOURCE IP ADDRESS</div>
+                <div class="ip-box">89.240.75.9</div>
+            </div>
+            
+            <!-- Requested URIs -->
+            <div class="section">
+   		 <div class="section-title">🔗 SUSPICIOUS REQUESTED URIS</div>
+   		 <div class="uri-item">/assets/sweetalert2/sweetalert2.min.css</div><div class="uri-item">/assets/sweetalert2/sweetalert2.min.css</div><div class="uri-item">/assets/datatable/dataTables.bootstrap4.min.css</div><div class="uri-item">/assets/datatable/dataTables.bootstrap4.min.css</div><div class="uri-item">/assets/fontawesome-free/webfonts/fa-regular-400.woff2</div><div class="uri-item">/assets/fontawesome-free/webfonts/fa-regular-400.woff2</div><div class="uri-item">/assets/fontawesome-free/webfonts/fa-regular-400.woff</div><div class="uri-item">/assets/fontawesome-free/webfonts/fa-regular-400.woff</div><div class="uri-item">/assets/fontawesome-free/webfonts/fa-regular-400.ttf</div><div class="uri-item">/assets/fontawesome-free/webfonts/fa-regular-400.ttf</div><div class="uri-item">/assets/fontawesome-free/webfonts/fa-regular-400.svg</div><div class="uri-item">/assets/fontawesome-free/webfonts/fa-regular-400.svg</div><div class="uri-item">/assets/fontawesome-free/webfonts/fa-solid-900.woff2</div><div class="uri-item">/assets/fontawesome-free/webfonts/fa-solid-900.woff2</div><div class="uri-item">/assets/fontawesome-free/webfonts/fa-solid-900.woff</div><div class="uri-item">/assets/fontawesome-free/webfonts/fa-solid-900.woff</div><div class="uri-item">/assets/fontawesome-free/webfonts/fa-solid-900.ttf</div><div class="uri-item">/assets/fontawesome-free/webfonts/fa-solid-900.ttf</div><div class="uri-item">/assets/fontawesome-free/webfonts/fa-solid-900.svg</div><div class="uri-item">/assets/fontawesome-free/webfonts/fa-solid-900.svg</div>
+	    </div>
+            
+            <!-- IP Intelligence -->
+            <div class="section">
+                <div class="section-title">🌐 IP INTELLIGENCE</div>
+                
+                <div class="info-row">
+                    <span class="info-label">Country:</span>
+                    <span class="info-value">United Kingdom of Great Britain and Northern Ireland (GB)</span>
+                </div>
+                
+                <div class="info-row">
+                    <span class="info-label">ISP:</span>
+                    <span class="info-value">TalkTalk Communications Limited</span>
+                </div>
+                
+                <div class="info-row">
+                    <span class="info-label">Domain:</span>
+                    <span class="info-value">talktalkplc.com</span>
+                </div>
+                
+                <div class="info-row">
+                    <span class="info-label">Usage Type:</span>
+                    <span class="info-value">Fixed Line ISP</span>
+                </div>
+                
+                <div class="info-row">
+                    <span class="info-label">Abuse Score:</span>
+                    <span class="info-value">
+                        <span class="score-indicator">0/100</span>
+                    </span>
+                </div>
+                
+                <div class="info-row">
+                    <span class="info-label">Last Reported:</span>
+                    <span class="info-value">null</span>
+                </div>
+            </div>
+            
+            <!-- Recent Abuse Reports -->
+            
+            <div class="section">
+   		 <div class="section-title">⚠️ RECENT ABUSE REPORTS</div>
+   		 <p>No recent abuse reports.</p>
+	    </div>
 
-<h1 id="title"></h1>
-<div class="subtitle" id="period"></div>
-
-<div class="cards" id="kpiCards"></div>
-
-<div class="charts">
-
-  <div class="section">
-    <h3>Visitors by Channel</h3>
-    <canvas id="visitorsChart"></canvas>
-  </div>
-
-  <div class="section">
-    <h3>Funnel Conversion</h3>
-    <canvas id="funnelChart"></canvas>
-  </div>
-
-</div>
-
-<div class="section">
-  <h3>Channel Breakdown</h3>
-  <table id="table"></table>
-</div>
-
-<div class="footer">
-Generated automatically • KPI Dashboard
-</div>
-
-</div>
-
-<script>
-/* ===== JSON Daten ===== */
-const report = {
-  reportTitle: "Weekly Sales Funnel Report",
-  period: "Week ending 2026-02-01",
-  data: [{"Date":"2025-11-10","Channel":"Google Ads","Visitors":"980","Leads":"78","Demo Booked":"31","Proposal Sent":"18","Won":"7"},{"Date":"2025-11-10","Channel":"LinkedIn","Visitors":"640","Leads":"55","Demo Booked":"21","Proposal Sent":"12","Won":"5"},{"Date":"2025-11-10","Channel":"Organic","Visitors":"1200","Leads":"102","Demo Booked":"44","Proposal Sent":"25","Won":"11"},{"Date":"2025-11-17","Channel":"Google Ads","Visitors":"1020","Leads":"81","Demo Booked":"34","Proposal Sent":"19","Won":"8"},{"Date":"2025-11-17","Channel":"LinkedIn","Visitors":"670","Leads":"58","Demo Booked":"23","Proposal Sent":"13","Won":"6"},{"Date":"2025-11-17","Channel":"Organic","Visitors":"1250","Leads":"108","Demo Booked":"46","Proposal Sent":"26","Won":"12"},{"Date":"2025-11-24","Channel":"Google Ads","Visitors":"1100","Leads":"86","Demo Booked":"36","Proposal Sent":"20","Won":"8"},{"Date":"2025-11-24","Channel":"LinkedIn","Visitors":"700","Leads":"60","Demo Booked":"24","Proposal Sent":"14","Won":"6"},{"Date":"2025-11-24","Channel":"Organic","Visitors":"1300","Leads":"112","Demo Booked":"48","Proposal Sent":"27","Won":"12"},{"Date":"2025-12-01","Channel":"Google Ads","Visitors":"1150","Leads":"90","Demo Booked":"38","Proposal Sent":"21","Won":"9"},{"Date":"2025-12-01","Channel":"LinkedIn","Visitors":"720","Leads":"62","Demo Booked":"25","Proposal Sent":"15","Won":"6"},{"Date":"2025-12-01","Channel":"Organic","Visitors":"1350","Leads":"118","Demo Booked":"50","Proposal Sent":"28","Won":"13"},{"Date":"2025-12-08","Channel":"Google Ads","Visitors":"1180","Leads":"92","Demo Booked":"39","Proposal Sent":"22","Won":"9"},{"Date":"2025-12-08","Channel":"LinkedIn","Visitors":"740","Leads":"64","Demo Booked":"26","Proposal Sent":"15","Won":"6"},{"Date":"2025-12-08","Channel":"Organic","Visitors":"1380","Leads":"120","Demo Booked":"52","Proposal Sent":"29","Won":"13"},{"Date":"2025-12-15","Channel":"Google Ads","Visitors":"1200","Leads":"94","Demo Booked":"40","Proposal Sent":"22","Won":"9"},{"Date":"2025-12-15","Channel":"LinkedIn","Visitors":"760","Leads":"66","Demo Booked":"27","Proposal Sent":"16","Won":"7"},{"Date":"2025-12-15","Channel":"Organic","Visitors":"1400","Leads":"123","Demo Booked":"53","Proposal Sent":"30","Won":"13"},{"Date":"2025-12-22","Channel":"Google Ads","Visitors":"900","Leads":"70","Demo Booked":"28","Proposal Sent":"16","Won":"6"},{"Date":"2025-12-22","Channel":"LinkedIn","Visitors":"600","Leads":"50","Demo Booked":"19","Proposal Sent":"11","Won":"4"},{"Date":"2025-12-22","Channel":"Organic","Visitors":"1100","Leads":"95","Demo Booked":"40","Proposal Sent":"23","Won":"10"},{"Date":"2025-12-29","Channel":"Google Ads","Visitors":"850","Leads":"66","Demo Booked":"26","Proposal Sent":"15","Won":"6"},{"Date":"2025-12-29","Channel":"LinkedIn","Visitors":"580","Leads":"48","Demo Booked":"18","Proposal Sent":"10","Won":"4"},{"Date":"2025-12-29","Channel":"Organic","Visitors":"1050","Leads":"92","Demo Booked":"38","Proposal Sent":"22","Won":"9"},{"Date":"2026-01-05","Channel":"Google Ads","Visitors":"1000","Leads":"80","Demo Booked":"32","Proposal Sent":"18","Won":"7"},{"Date":"2026-01-05","Channel":"LinkedIn","Visitors":"650","Leads":"54","Demo Booked":"21","Proposal Sent":"12","Won":"5"},{"Date":"2026-01-05","Channel":"Organic","Visitors":"1250","Leads":"108","Demo Booked":"46","Proposal Sent":"26","Won":"12"},{"Date":"2026-01-12","Channel":"Google Ads","Visitors":"1080","Leads":"85","Demo Booked":"35","Proposal Sent":"20","Won":"8"},{"Date":"2026-01-12","Channel":"LinkedIn","Visitors":"700","Leads":"59","Demo Booked":"23","Proposal Sent":"13","Won":"6"},{"Date":"2026-01-12","Channel":"Organic","Visitors":"1320","Leads":"114","Demo Booked":"49","Proposal Sent":"28","Won":"12"},{"Date":"2026-01-19","Channel":"Google Ads","Visitors":"1120","Leads":"88","Demo Booked":"37","Proposal Sent":"21","Won":"8"},{"Date":"2026-01-19","Channel":"LinkedIn","Visitors":"730","Leads":"61","Demo Booked":"24","Proposal Sent":"14","Won":"6"},{"Date":"2026-01-19","Channel":"Organic","Visitors":"1380","Leads":"119","Demo Booked":"51","Proposal Sent":"29","Won":"13"},{"Date":"2026-01-26","Channel":"Google Ads","Visitors":"1180","Leads":"93","Demo Booked":"39","Proposal Sent":"22","Won":"9"},{"Date":"2026-01-26","Channel":"LinkedIn","Visitors":"760","Leads":"65","Demo Booked":"26","Proposal Sent":"15","Won":"7"},{"Date":"2026-01-26","Channel":"Organic","Visitors":"1450","Leads":"126","Demo Booked":"54","Proposal Sent":"31","Won":"14"},{"Date":"2026-02-01","Channel":"Google Ads","Visitors":"1200","Leads":"95","Demo Booked":"40","Proposal Sent":"22","Won":"9"},{"Date":"2026-02-01","Channel":"LinkedIn","Visitors":"800","Leads":"70","Demo Booked":"28","Proposal Sent":"16","Won":"7"},{"Date":"2026-02-01","Channel":"Organic","Visitors":"1500","Leads":"130","Demo Booked":"55","Proposal Sent":"30","Won":"14"}]
-};
-
-/* ===== Totals berechnen ===== */
-const totals = report.data.reduce((a,c)=>({
-  visitors: a.visitors + (Number(c["Visitors"]) || 0),
-  leads: a.leads + (Number(c["Leads"]) || 0),
-  demo: a.demo + (Number(c["Demo Booked"]) || 0),
-  proposal: a.proposal + (Number(c["Proposal Sent"]) || 0),
-  won: a.won + (Number(c["Won"]) || 0)
-}), {visitors:0, leads:0, demo:0, proposal:0, won:0});
-
-/* ===== KPIs ===== */
-const leadRate = totals.visitors
-  ? ((totals.leads / totals.visitors)*100).toFixed(1)
-  : "0.0";
-
-const closeRate = totals.leads
-  ? ((totals.won / totals.leads)*100).toFixed(1)
-  : "0.0";
-
-/* ===== HEADER ===== */
-document.getElementById("title").textContent = report.reportTitle;
-document.getElementById("period").textContent = report.period;
-
-/* ===== KPI CARDS ===== */
-const cards = [
-  ["Visitors", totals.visitors],
-  ["Leads", totals.leads],
-  ["Deals Won", totals.won],
-  ["Lead Rate", leadRate+"%"],
-  ["Close Rate", closeRate+"%"]
-];
-document.getElementById("kpiCards").innerHTML = cards.map(c=>`
-<div class="card">
-  <div class="label">${c[0]}</div>
-  <div class="value">${c[1]}</div>
-</div>`).join("");
-
-/* ===== TABLE ===== */
-document.getElementById("table").innerHTML = `
-<tr>
-  <th>Channel</th>
-  <th>Visitors</th>
-  <th>Leads</th>
-  <th>Demo</th>
-  <th>Proposal</th>
-  <th>Won</th>
-</tr>` + report.data.map(r=>`
-<tr>
-  <td>${r["Channel"]}</td>
-  <td>${r["Visitors"]}</td>
-  <td>${r["Leads"]}</td>
-  <td>${r["Demo Booked"]}</td>
-  <td>${r["Proposal Sent"]}</td>
-  <td>${r["Won"]}</td>
-</tr>`).join("");
-
-/* ===== VISITORS CHART ===== */
-new Chart(document.getElementById('visitorsChart'),{
-  type:'bar',
-  data:{
-    labels: report.data.map(r=>r["Channel"]),
-    datasets:[{
-      label:'Visitors',
-      data: report.data.map(r=>Number(r["Visitors"]) || 0),
-      backgroundColor:['#4f46e5','#10b981','#f59e0b']
-    }]
-  },
-  options:{
-    responsive:true,
-    plugins:{legend:{display:false}},
-    layout:{padding:8}
-  }
-});
-
-/* ===== FUNNEL CHART ===== */
-new Chart(document.getElementById('funnelChart'),{
-  type:'line',
-  data:{
-    labels:["Visitors","Leads","Demo","Proposal","Won"],
-    datasets:[{
-      label:'Total Funnel',
-      data:[
-        totals.visitors,
-        totals.leads,
-        totals.demo,
-        totals.proposal,
-        totals.won
-      ],
-      borderColor:'#4f46e5',
-      backgroundColor:'rgba(79,70,229,0.2)',
-      tension:0.4,
-      fill:true
-    }]
-  },
-  options:{
-    responsive:true,
-    plugins:{legend:{display:false}},
-    layout:{padding:8}
-  }
-});
-</script>
+            <!-- Footer -->
+            <div class="footer">
+                Report generated: 2026-03-12 03:03:58 | IP: 89.240.75.9
+            </div>
+        </div>
+    </div>
 </body>
 </html>
