@@ -3,34 +3,178 @@
 <html>
 <head>
   <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>IP Threat Dashboard</title>
   <style>
+    /* ----- Your exact styles (copied from your template) ----- */
     body {
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      margin: 20px;
-      background: #ecf0f1;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Arial, sans-serif;
+      line-height: 1.6;
+      margin: 0;
+      padding: 20px;
+      background: #f5f5f5;
     }
-    h1 {
-      color: #2c3e50;
+    .container {
+      max-width: 100%;
+      margin: 0 auto;
+    }
+    .header {
+      background: #dc3545;
+      color: white;
+      padding: 15px 20px;
+      border-radius: 8px 8px 0 0;
+    }
+    .header h2 {
+      margin: 0;
+      font-size: 20px;
+    }
+    .content {
+      background: white;
+      padding: 20px;
+      border-radius: 0 0 8px 8px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    }
+    .ip-box {
+      background: #f8f9fa;
+      padding: 20px;
+      border-radius: 6px;
+      font-family: monospace;
+      font-size: 28px;
+      font-weight: bold;
+      color: #dc3545;
       text-align: center;
+      border: 2px solid #dee2e6;
+      margin: 15px 0;
     }
+    .section {
+      margin-bottom: 25px;
+      padding: 15px;
+      background: #f8f9fa;
+      border-radius: 6px;
+    }
+    .section-title {
+      font-weight: bold;
+      color: #495057;
+      margin-bottom: 15px;
+      font-size: 16px;
+      text-transform: uppercase;
+      border-bottom: 2px solid #dee2e6;
+      padding-bottom: 8px;
+    }
+    .uri-item {
+      background: #1e1e2f;
+      color: #00ff9d;
+      padding: 8px 12px;
+      margin-bottom: 4px;
+      border-radius: 4px;
+      font-family: monospace;
+      font-size: 13px;
+    }
+    .info-row {
+      display: flex;
+      margin-bottom: 8px;
+      padding: 8px;
+      background: white;
+      border-radius: 4px;
+    }
+    .info-label {
+      font-weight: bold;
+      width: 120px;
+      color: #495057;
+    }
+    .info-value {
+      color: #212529;
+    }
+    .report-item {
+      background: white;
+      padding: 12px;
+      margin-bottom: 10px;
+      border-radius: 4px;
+      border-left: 4px solid #dc3545;
+    }
+    .report-date {
+      color: #6c757d;
+      font-size: 12px;
+      margin-bottom: 5px;
+    }
+    .report-comment {
+      font-weight: bold;
+      margin-bottom: 8px;
+    }
+    .category-badge {
+      display: inline-block;
+      background: #17a2b8;
+      color: white;
+      padding: 2px 8px;
+      border-radius: 12px;
+      font-size: 11px;
+      margin-right: 4px;
+    }
+    .stats {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 20px;
+    }
+    .stat-box {
+      flex: 1;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      padding: 15px;
+      text-align: center;
+      border-radius: 6px;
+      color: white;
+    }
+    .stat-number {
+      font-size: 28px;
+      font-weight: bold;
+    }
+    .stat-label {
+      font-size: 12px;
+      opacity: 0.9;
+      text-transform: uppercase;
+    }
+    .footer {
+      margin-top: 20px;
+      text-align: center;
+      color: #6c757d;
+      font-size: 12px;
+      padding-top: 15px;
+      border-top: 1px solid #dee2e6;
+    }
+    .score-high {
+      background: #dc3545;
+      color: white;
+    }
+    .score-medium {
+      background: #ffc107;
+      color: #212529;
+    }
+    .score-low {
+      background: #28a745;
+      color: white;
+    }
+    .abuse-score {
+      display: inline-block;
+      padding: 3px 10px;
+      border-radius: 20px;
+      font-size: 14px;
+      font-weight: bold;
+    }
+    /* ----- Grid layout for cards ----- */
     .grid {
       display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+      grid-template-columns: repeat(auto-fill, minmax(380px, 1fr));
       gap: 24px;
-      padding: 16px;
+      margin-top: 20px;
     }
     .card {
       background: white;
       border-radius: 12px;
-      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
       overflow: hidden;
-      transition: transform 0.2s;
-      border: 1px solid #bdc3c7;
+      transition: 0.2s;
     }
     .card:hover {
-      transform: translateY(-4px);
-      box-shadow: 0 8px 16px rgba(0,0,0,0.15);
+      box-shadow: 0 8px 20px rgba(0,0,0,0.2);
     }
     .card-header {
       background: #34495e;
@@ -50,69 +194,949 @@
       padding: 4px 12px;
       border-radius: 20px;
       font-size: 0.8rem;
-      font-weight: 500;
     }
     .card-body {
       padding: 16px;
     }
     .score {
-      color: white;
-      padding: 8px 12px;
-      border-radius: 6px;
-      margin-bottom: 12px;
+      padding: 6px 12px;
+      border-radius: 20px;
       font-weight: 600;
       text-align: center;
-      font-size: 1rem;
+      margin-bottom: 12px;
     }
-    .card-body p {
-      margin: 6px 0;
-      font-size: 0.9rem;
-      color: #2c3e50;
+    .summary-uris {
+      background: #f0f2f5;
+      padding: 10px;
+      border-radius: 6px;
+      margin: 12px 0;
+      font-size: 0.85rem;
     }
-    details {
-      margin-top: 12px;
-    }
-    summary {
+    .toggle-btn {
+      background: #007bff;
+      color: white;
+      border: none;
+      padding: 8px 16px;
+      border-radius: 6px;
       cursor: pointer;
-      color: #2980b9;
       font-weight: 600;
-      font-size: 0.9rem;
+      width: 100%;
+      margin-top: 10px;
     }
-    ul {
-      margin: 6px 0 0 18px;
-      padding: 0;
-      font-size: 0.8rem;
-      color: #2c3e50;
+    .toggle-btn:hover {
+      background: #0056b3;
     }
-    li {
-      word-break: break-all;
+    /* Hidden full details */
+    .full-details {
+      display: none;
+      padding: 20px;
+      border-top: 2px solid #dee2e6;
+      background: #fafafa;
+    }
+    .full-details.show {
+      display: block;
     }
   </style>
+  <script>
+    function toggleDetails(index) {
+      const details = document.getElementById('details-' + index);
+      details.classList.toggle('show');
+      // Optionally change button text (but we would need a reference to the button)
+    }
+  </script>
 </head>
 <body>
-  <h1>🔍 IP Threat Intelligence Dashboard</h1>
-  <div class="grid">
-    
+  <div class="container">
+    <div class="header">
+      <h2>⚠️ SECURITY ALERT: Multiple Suspicious IPs Detected</h2>
+    </div>
+    <div class="content">
+      <div class="grid">
+        
     <div class="card">
       <div class="card-header">
         <span class="ip">119.235.221.127</span>
         <span class="country">Indonesia</span>
       </div>
       <div class="card-body">
-        <div class="score" style="background-color: #c0392b;">
-          Abuse Score: 100
+        <div class="score score-high">Abuse Score: 100</div>
+        <p><strong>Total Reports:</strong> 83</p>
+        <div class="summary-uris">
+          <strong>Sample URIs:</strong><br>
+          /.git/HEAD<br>/.git/HEAD<br>/
+          <br>… and 47 more
         </div>
-        <p><strong>Reports:</strong> 83</p>
-        <p><strong>Last Reported:</strong> 3/13/2026, 12:20:13 AM</p>
-        <p><strong>ISP:</strong> PT. Mora Telematika Indonesia</p>
-        <p><strong>Domain:</strong> moratelindo.co.id</p>
-        <details>
-          <summary>URIs (50)</summary>
-          <ul><li>/.git/HEAD</li><li>/.git/HEAD</li><li>/</li><li>/.env.bak</li><li>/.env.bak</li><li>… and 45 more</li></ul>
-        </details>
+        <button class="toggle-btn" onclick="toggleDetails(0)">Show Full Details</button>
+      </div>
+      <!-- This div holds the full details (initially hidden) -->
+      
+    <div class="full-details" id="details-0">
+      <div class="stats">
+        <div class="stat-box">
+          <div class="stat-number">83</div>
+          <div class="stat-label">Total Reports</div>
+        </div>
+        <div class="info-row" style="flex:1; background:white; border-radius:6px; padding:10px;">
+          <span class="info-label">Abuse Score:</span>
+          <span class="info-value">
+            <span class="abuse-score score-high">100/100</span>
+          </span>
+        </div>
+        <div class="stat-box">
+          <div class="stat-number">83</div>
+          <div class="stat-label">Recent Reports</div>
+        </div>
+      </div>
+
+      <!-- IP Address -->
+      <div class="section">
+        <div class="section-title">📍 SOURCE IP ADDRESS</div>
+        <div class="ip-box">119.235.221.127</div>
+      </div>
+
+      <!-- Requested URIs -->
+      <div class="section">
+        <div class="section-title">🔗 SUSPICIOUS REQUESTED URIS</div>
+        <div class="uri-item">/.git/HEAD</div><div class="uri-item">/.git/HEAD</div><div class="uri-item">/</div><div class="uri-item">/.env.bak</div><div class="uri-item">/.env.bak</div><div class="uri-item">/.env.bak</div><div class="uri-item">/.env.local</div><div class="uri-item">/.env.local</div><div class="uri-item">/.env.production</div><div class="uri-item">/.env.production</div><div class="uri-item">/.env.staging</div><div class="uri-item">/.env.staging</div><div class="uri-item">/.env.dev</div><div class="uri-item">/.env.dev</div><div class="uri-item">/.env</div><div class="uri-item">/.env</div><div class="uri-item">/.env.backup</div><div class="uri-item">/.env.backup</div><div class="uri-item">/.env.backup</div><div class="uri-item">/.env.old</div><div class="uri-item">/.env.old</div><div class="uri-item">/.env.old</div><div class="uri-item">/.env.development</div><div class="uri-item">/.env.development</div><div class="uri-item">/.env.template</div><div class="uri-item">/.env.template</div><div class="uri-item">/.env.copy</div><div class="uri-item">/.env.copy</div><div class="uri-item">/account/.env</div><div class="uri-item">/account/.env</div><div class="uri-item">/projects/.env</div><div class="uri-item">/projects/.env</div><div class="uri-item">/project/.env</div><div class="uri-item">/project/.env</div><div class="uri-item">/site/.env</div><div class="uri-item">/local/.env</div><div class="uri-item">/local/.env</div><div class="uri-item">/login/.env</div><div class="uri-item">/login/.env</div><div class="uri-item">/web/.env</div><div class="uri-item">/web/.env</div><div class="uri-item">/system/.env</div><div class="uri-item">/system/.env</div><div class="uri-item">/environment/.env</div><div class="uri-item">/environment/.env</div><div class="uri-item">/public/.env</div><div class="uri-item">/public/.env</div><div class="uri-item">/assets/.env</div><div class="uri-item">/assets/.env</div><div class="uri-item">/laravel/.env</div>
+      </div>
+
+      <!-- IP Intelligence -->
+      <div class="section">
+        <div class="section-title">🌐 IP INTELLIGENCE</div>
+        <div class="info-row">
+          <span class="info-label">Country:</span>
+          <span class="info-value">Indonesia (ID)</span>
+        </div>
+        <div class="info-row">
+          <span class="info-label">ISP:</span>
+          <span class="info-value">PT. Mora Telematika Indonesia</span>
+        </div>
+        <div class="info-row">
+          <span class="info-label">Domain:</span>
+          <span class="info-value">moratelindo.co.id</span>
+        </div>
+        <div class="info-row">
+          <span class="info-label">Usage Type:</span>
+          <span class="info-value">Fixed Line ISP</span>
+        </div>
+        <div class="info-row">
+          <span class="info-label">Abuse Score:</span>
+          <span class="info-value">
+            <span class="score-indicator">100/100</span>
+          </span>
+        </div>
+        <div class="info-row">
+          <span class="info-label">Last Reported:</span>
+          <span class="info-value">3/13/2026, 12:20:13 AM</span>
+        </div>
+      </div>
+
+      <!-- Recent Abuse Reports -->
+      <div class="section">
+        <div class="section-title">⚠️ RECENT ABUSE REPORTS</div>
+        
+      <div class="report-item">
+        <div class="report-date">3/13/2026, 12:20:06 AM</div>
+        <div class="report-comment">Webpage scraping</div>
+        <div><span class="category-badge">Cat 18</span><span class="category-badge">Cat 19</span><span class="category-badge">Cat 21</span></div>
+        <div style="font-size:11px; color:#666; margin-top:4px;">
+          Reporter: Germany
+        </div>
+      </div>
+    
+      <div class="report-item">
+        <div class="report-date">3/13/2026, 12:12:52 AM</div>
+        <div class="report-comment">119.235.221.127 - - [13/Mar/2026:00:12:50 +0000] &quot;GET /.env.bak HTTP/1.1&quot; 404 322 &quot;-&quot; &quot;Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/42.0.2311.135 Safari/537.36 Edge/12.246&quot;
+119.235.221.127 - - [13/Mar/2026:00:12:51 +0000] &quot;GET /.env.local HTTP/1.1&quot; 404 322 &quot;-&quot; &quot;Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/42.0.2311.135 Safari/537.36 Edge/12.246&quot;
+119.235.221.127 - - [13/Mar/2026:00:12:51 +0000] &quot;GET /.env.production HTTP/1.1&quot; 404 322 &quot;-&quot; &quot;Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/42.0.2311.135 Safari/537.36 Edge/12.246&quot;
+...</div>
+        <div><span class="category-badge">Cat 21</span></div>
+        <div style="font-size:11px; color:#666; margin-top:4px;">
+          Reporter: United Kingdom of Great Britain and Northern Ireland
+        </div>
+      </div>
+    
+      <div class="report-item">
+        <div class="report-date">3/13/2026, 12:11:35 AM</div>
+        <div class="report-comment">LF_MODSEC: (mod_security) mod_security (id:1000001) triggered by 119.235.221.127 (ID/Indonesia/-): 1 in the last 3600 secs</div>
+        <div><span class="category-badge">Cat 21</span></div>
+        <div style="font-size:11px; color:#666; margin-top:4px;">
+          Reporter: Indonesia
+        </div>
+      </div>
+    
+      <div class="report-item">
+        <div class="report-date">3/12/2026, 11:50:15 PM</div>
+        <div class="report-comment">119.235.221.127 (ID/Indonesia/Jakarta/Jakarta/-/[redacted]), more than 30 Apache 403 hits</div>
+        <div><span class="category-badge">Cat 15</span></div>
+        <div style="font-size:11px; color:#666; margin-top:4px;">
+          Reporter: Netherlands
+        </div>
+      </div>
+    
+      <div class="report-item">
+        <div class="report-date">3/12/2026, 11:21:03 PM</div>
+        <div class="report-comment">LF_MODSEC: (mod_security) mod_security (id:949110) triggered by 119.235.221.127 (ID/Indonesia/-): 1 in the last 3600 secs</div>
+        <div><span class="category-badge">Cat 21</span></div>
+        <div style="font-size:11px; color:#666; margin-top:4px;">
+          Reporter: Indonesia
+        </div>
+      </div>
+    
+      <div class="report-item">
+        <div class="report-date">3/12/2026, 10:21:40 AM</div>
+        <div class="report-comment">LF_MODSEC: (mod_security) mod_security (id:949110) triggered by 119.235.221.127 (ID/Indonesia/-): 2 in the last 3600 secs</div>
+        <div><span class="category-badge">Cat 21</span></div>
+        <div style="font-size:11px; color:#666; margin-top:4px;">
+          Reporter: Indonesia
+        </div>
+      </div>
+    
+      <div class="report-item">
+        <div class="report-date">3/12/2026, 9:57:31 AM</div>
+        <div class="report-comment">Web application attack, Automated scan</div>
+        <div><span class="category-badge">Cat 21</span><span class="category-badge">Cat 15</span><span class="category-badge">Cat 16</span></div>
+        <div style="font-size:11px; color:#666; margin-top:4px;">
+          Reporter: United Arab Emirates
+        </div>
+      </div>
+    
+      <div class="report-item">
+        <div class="report-date">3/12/2026, 5:41:08 AM</div>
+        <div class="report-comment">2026-03-12T06:41:07+01:00 lufischer04 ids442 2026-03-12 06:41:07 119.235.221.127: blacklisted Pattern: /.env.production
+...</div>
+        <div><span class="category-badge">Cat 10</span><span class="category-badge">Cat 18</span><span class="category-badge">Cat 15</span><span class="category-badge">Cat 21</span></div>
+        <div style="font-size:11px; color:#666; margin-top:4px;">
+          Reporter: Switzerland
+        </div>
+      </div>
+    
+      <div class="report-item">
+        <div class="report-date">3/12/2026, 1:06:49 AM</div>
+        <div class="report-comment">Attempted access to sensitive configuration files (.env, .git, etc.)</div>
+        <div><span class="category-badge">Cat 19</span><span class="category-badge">Cat 21</span></div>
+        <div style="font-size:11px; color:#666; margin-top:4px;">
+          Reporter: Germany
+        </div>
+      </div>
+    
+      <div class="report-item">
+        <div class="report-date">3/11/2026, 8:54:49 PM</div>
+        <div class="report-comment">Aggressive web scan</div>
+        <div><span class="category-badge">Cat 21</span></div>
+        <div style="font-size:11px; color:#666; margin-top:4px;">
+          Reporter: Germany
+        </div>
+      </div>
+    
+      <div class="report-item">
+        <div class="report-date">3/11/2026, 8:35:07 PM</div>
+        <div class="report-comment">(mod_security) mod_security triggered on hostname [redacted] 119.235.221.127 (ID/Indonesia/-)</div>
+        <div><span class="category-badge">Cat 16</span></div>
+        <div style="font-size:11px; color:#666; margin-top:4px;">
+          Reporter: France
+        </div>
+      </div>
+    
+      <div class="report-item">
+        <div class="report-date">3/11/2026, 7:21:50 PM</div>
+        <div class="report-comment">Suspicious URL access.</div>
+        <div><span class="category-badge">Cat 21</span></div>
+        <div style="font-size:11px; color:#666; margin-top:4px;">
+          Reporter: France
+        </div>
+      </div>
+    
+      <div class="report-item">
+        <div class="report-date">3/11/2026, 7:21:20 PM</div>
+        <div class="report-comment">119.235.221.127 - - [11/Mar/2026:14:21:17 -0500] &quot;GET /.env.bak HTTP/1.1&quot; 403 199 &quot;-&quot; &quot;Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/42.0.2311.135 Safari/537.36 Edge/12.246&quot; 119.235.221.127
+119.235.221.127 - - [11/Mar/2026:14:21:17 -0500] &quot;GET /.env.local HTTP/1.1&quot; 403 199 &quot;-&quot; &quot;Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/42.0.2311.135 Safari/537.36 Edge/12.246&quot; 119.235.221.127
+119.235.221.127 - - [11/Mar/2026:14:21:17 -0500] &quot;GET /.env.production HTTP/1.1&quot; 403 199 &quot;-&quot; &quot;Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/42.0.2311.135 Safari/537.36 Edge/12.246&quot; 119.235.221.127
+119.235.221.127 - - [11/Mar/2026:14:21:18 -0500] &quot;GET /.env.staging HTTP/1.1&quot; 403 199 &quot;-&quot; &quot;Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/42.0.2311.135 Safari/537.36 Edge/12.246&quot; 119.235.221.127
+119.235.221.127 - - [11/Mar/2026:14:21:18 -0500] &quot;GET /.env
+...</div>
+        <div><span class="category-badge">Cat 18</span><span class="category-badge">Cat 19</span><span class="category-badge">Cat 21</span></div>
+        <div style="font-size:11px; color:#666; margin-top:4px;">
+          Reporter: United States of America
+        </div>
+      </div>
+    
+      <div class="report-item">
+        <div class="report-date">3/11/2026, 7:09:21 PM</div>
+        <div class="report-comment">LF_MODSEC: (mod_security) mod_security (id:1000001) triggered by 119.235.221.127 (ID/Indonesia/-): 1 in the last 3600 secs</div>
+        <div><span class="category-badge">Cat 21</span></div>
+        <div style="font-size:11px; color:#666; margin-top:4px;">
+          Reporter: Indonesia
+        </div>
+      </div>
+    
+      <div class="report-item">
+        <div class="report-date">3/11/2026, 6:37:11 PM</div>
+        <div class="report-comment">499  requests with url.path *.env</div>
+        <div><span class="category-badge">Cat 18</span><span class="category-badge">Cat 19</span></div>
+        <div style="font-size:11px; color:#666; margin-top:4px;">
+          Reporter: Belgium
+        </div>
+      </div>
+    
+      <div class="report-item">
+        <div class="report-date">3/11/2026, 6:23:27 PM</div>
+        <div class="report-comment">Accessed trap at &#039;/.git/HEAD&#039;</div>
+        <div><span class="category-badge">Cat 21</span></div>
+        <div style="font-size:11px; color:#666; margin-top:4px;">
+          Reporter: Belgium
+        </div>
+      </div>
+    
+      <div class="report-item">
+        <div class="report-date">3/11/2026, 1:58:01 PM</div>
+        <div class="report-comment">Blocked by ModSecurity. Rule ID: 210492 Message: None Phase: 1 Severity: CRITICAL URI: /.git/HEAD Server: UK-01</div>
+        <div><span class="category-badge">Cat 21</span><span class="category-badge">Cat 15</span><span class="category-badge">Cat 16</span></div>
+        <div style="font-size:11px; color:#666; margin-top:4px;">
+          Reporter: United Kingdom of Great Britain and Northern Ireland
+        </div>
+      </div>
+    
+      <div class="report-item">
+        <div class="report-date">3/11/2026, 12:40:41 PM</div>
+        <div class="report-comment">Security attack detected. Multiple failed attempts from 119.235.221.127. IP banned for 1440 minutes at 11.03.2026 15:40:41. Failed attempts: 1</div>
+        <div><span class="category-badge">Cat 18</span></div>
+        <div style="font-size:11px; color:#666; margin-top:4px;">
+          Reporter: Turkey
+        </div>
+      </div>
+    
+      <div class="report-item">
+        <div class="report-date">3/11/2026, 12:01:00 AM</div>
+        <div class="report-comment">[ISILIA Protection v2.1] Tentative d&#039;accès: /.git/head | Pays: ID | UA: Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:88.0) Gecko/20100101 Firefox/88.0</div>
+        <div><span class="category-badge">Cat 15</span><span class="category-badge">Cat 21</span></div>
+        <div style="font-size:11px; color:#666; margin-top:4px;">
+          Reporter: United States of America
+        </div>
+      </div>
+    
+      <div class="report-item">
+        <div class="report-date">3/10/2026, 9:13:22 PM</div>
+        <div class="report-comment">Hacking Attempt using path /.git/HEAD</div>
+        <div><span class="category-badge">Cat 15</span></div>
+        <div style="font-size:11px; color:#666; margin-top:4px;">
+          Reporter: United States of America
+        </div>
+      </div>
+    
+      <div class="report-item">
+        <div class="report-date">3/10/2026, 11:06:58 AM</div>
+        <div class="report-comment">Querying for PHP services on a non-PHP site (/api/index.php/v1/config/application)</div>
+        <div><span class="category-badge">Cat 21</span></div>
+        <div style="font-size:11px; color:#666; margin-top:4px;">
+          Reporter: United Kingdom of Great Britain and Northern Ireland
+        </div>
+      </div>
+    
+      <div class="report-item">
+        <div class="report-date">3/9/2026, 4:42:56 PM</div>
+        <div class="report-comment">FW-PortScan: Traffic Blocked srcport=61606 dstport=80</div>
+        <div><span class="category-badge">Cat 14</span></div>
+        <div style="font-size:11px; color:#666; margin-top:4px;">
+          Reporter: Germany
+        </div>
+      </div>
+    
+      <div class="report-item">
+        <div class="report-date">3/9/2026, 1:31:59 PM</div>
+        <div class="report-comment">(apache-useragents) Failed apache-useragents trigger with match [redacted] from 119.235.221.127 (ID/Indonesia/-)</div>
+        <div><span class="category-badge">Cat 19</span></div>
+        <div style="font-size:11px; color:#666; margin-top:4px;">
+          Reporter: France
+        </div>
+      </div>
+    
+      <div class="report-item">
+        <div class="report-date">3/9/2026, 12:00:38 PM</div>
+        <div class="report-comment">Triggered Cloudflare WAF from ID.
+Action taken: BLOCK
+ASN: 131111 (CEPATNET-AS-ID PT Mora Telematika Indonesia)
+Protocol: HTTP/1.1 (GET method)
+Endpoint: /.git/HEAD
+Timestamp: 2026-03-09T10:10:19Z
+User-Agent: Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:88.0) Gecko/20100101 Firefox/88.0</div>
+        <div><span class="category-badge">Cat 19</span></div>
+        <div style="font-size:11px; color:#666; margin-top:4px;">
+          Reporter: Hungary
+        </div>
+      </div>
+    
+      <div class="report-item">
+        <div class="report-date">3/9/2026, 6:49:47 AM</div>
+        <div class="report-comment">Hacking Attempt using path /.git/HEAD</div>
+        <div><span class="category-badge">Cat 15</span></div>
+        <div style="font-size:11px; color:#666; margin-top:4px;">
+          Reporter: United States of America
+        </div>
+      </div>
+    
+      <div class="report-item">
+        <div class="report-date">3/9/2026, 6:46:58 AM</div>
+        <div class="report-comment">Vulnerability Probe
+...</div>
+        <div><span class="category-badge">Cat 21</span></div>
+        <div style="font-size:11px; color:#666; margin-top:4px;">
+          Reporter: United States of America
+        </div>
+      </div>
+    
+      <div class="report-item">
+        <div class="report-date">3/8/2026, 11:01:58 PM</div>
+        <div class="report-comment">Auto-ban: single probe for restricted files (.env / backups / admin endpoints). Likely mass-scan on 2026-03-07.</div>
+        <div><span class="category-badge">Cat 21</span><span class="category-badge">Cat 22</span><span class="category-badge">Cat 15</span></div>
+        <div style="font-size:11px; color:#666; margin-top:4px;">
+          Reporter: Netherlands
+        </div>
+      </div>
+    
+      <div class="report-item">
+        <div class="report-date">3/8/2026, 12:47:17 PM</div>
+        <div class="report-comment">(mod_security) mod_security (id:210492) triggered by 119.235.221.127 (-): 1 in the last 300 secs; Ports: *; Direction: 1; Trigger: LF_MODSEC; Logs: [Sun Mar 08 08:47:04.865670 2026] [security2:error] [pid 18894:tid 18894] [client 119.235.221.127:0] ModSecurity: Access denied with code 403 (phase 1). Matched phrase &quot;/.git/&quot; at REQUEST_URI. [file &quot;/etc/apache2/conf.d/modsec_vendor_configs/comodo_apache/02_Global_Generic.conf&quot;] [line &quot;117&quot;] [id &quot;210492&quot;] [rev &quot;3&quot;] [severity &quot;CRITICAL&quot;] [tag &quot;CWAF&quot;] [tag &quot;Generic&quot;] [hostname &quot;mail.hcoahawaii.org&quot;] [uri &quot;/.git/HEAD&quot;] [unique_id &quot;aa1vyOcyP8E2eqibH2rsJgAAAAY&quot;]</div>
+        <div><span class="category-badge">Cat 18</span><span class="category-badge">Cat 19</span><span class="category-badge">Cat 21</span></div>
+        <div style="font-size:11px; color:#666; margin-top:4px;">
+          Reporter: United States of America
+        </div>
+      </div>
+    
+      <div class="report-item">
+        <div class="report-date">3/8/2026, 12:05:07 PM</div>
+        <div class="report-comment">119.235.221.127 - - [08/Mar/2026:12:05:06 +0000] &quot;GET /api/index.php/v1/config/application?public=true HTTP/1.1&quot; 301 5930 &quot;-&quot; &quot;python-requests/2.32.5&quot;</div>
+        <div><span class="category-badge">Cat 18</span><span class="category-badge">Cat 21</span></div>
+        <div style="font-size:11px; color:#666; margin-top:4px;">
+          Reporter: United Kingdom of Great Britain and Northern Ireland
+        </div>
+      </div>
+    
+      <div class="report-item">
+        <div class="report-date">3/8/2026, 8:51:19 AM</div>
+        <div class="report-comment">Automated report (2026-03-08T04:51:19-04:00). Scraper detected.</div>
+        <div><span class="category-badge">Cat 19</span></div>
+        <div style="font-size:11px; color:#666; margin-top:4px;">
+          Reporter: United States of America
+        </div>
+      </div>
+    
+      <div class="report-item">
+        <div class="report-date">3/8/2026, 7:05:12 AM</div>
+        <div class="report-comment">Joomla!.CMS.Webservice.API.index.php.Unauthorized.Access</div>
+        <div><span class="category-badge">Cat 18</span></div>
+        <div style="font-size:11px; color:#666; margin-top:4px;">
+          Reporter: United States of America
+        </div>
+      </div>
+    
+      <div class="report-item">
+        <div class="report-date">3/8/2026, 6:57:50 AM</div>
+        <div class="report-comment">Cloudflare WAF: Request Path: /api/index.php/v1/config/application Request Query: ?public=true Host: foro.elhacker.net userAgent: python-requests/2.32.5 Action: block Source: firewallManaged ASN Description: CEPATNET-AS-ID PT Mora Telematika Indonesia Country: ID Method: GET Timestamp: 2026-03-08T06:57:50Z ruleId: 6da28a8f5a734bb7a89f55572f26b3a7. Report generated by Cloudflare-WAF-to-AbuseIPDB (https://github.com/MHG-LAB/Cloudflare-WAF-to-AbuseIPDB).</div>
+        <div><span class="category-badge">Cat 15</span><span class="category-badge">Cat 16</span><span class="category-badge">Cat 21</span></div>
+        <div style="font-size:11px; color:#666; margin-top:4px;">
+          Reporter: Spain
+        </div>
+      </div>
+    
+      <div class="report-item">
+        <div class="report-date">3/8/2026, 12:38:31 AM</div>
+        <div class="report-comment">[ISILIA Protection v2.1] Tentative d&#039;accès: /.git/head | Pays: ID | UA: Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:88.0) Gecko/20100101 Firefox/88.0</div>
+        <div><span class="category-badge">Cat 15</span><span class="category-badge">Cat 21</span></div>
+        <div style="font-size:11px; color:#666; margin-top:4px;">
+          Reporter: United States of America
+        </div>
+      </div>
+    
+      <div class="report-item">
+        <div class="report-date">3/7/2026, 8:40:29 AM</div>
+        <div class="report-comment">(mod_security) mod_security (id:210492) triggered by 119.235.221.127 (-): 1 in the last 300 secs; Ports: *; Direction: 1; Trigger: LF_MODSEC; Logs: [Sat Mar 07 03:40:16.361932 2026] [security2:error] [pid 445:tid 445] [client 119.235.221.127:0] ModSecurity: Access denied with code 403 (phase 1). Matched phrase &quot;/.git/&quot; at REQUEST_URI. [file &quot;/etc/apache2/conf.d/modsec_vendor_configs/comodo_apache/02_Global_Generic.conf&quot;] [line &quot;117&quot;] [id &quot;210492&quot;] [rev &quot;3&quot;] [severity &quot;CRITICAL&quot;] [tag &quot;CWAF&quot;] [tag &quot;Generic&quot;] [hostname &quot;cpcalendars.sportsbookcommission.com&quot;] [uri &quot;/.git/HEAD&quot;] [unique_id &quot;aavkcD_4N7kfA8C_qdmCnwAAAAM&quot;]</div>
+        <div><span class="category-badge">Cat 18</span><span class="category-badge">Cat 19</span><span class="category-badge">Cat 21</span></div>
+        <div style="font-size:11px; color:#666; margin-top:4px;">
+          Reporter: United States of America
+        </div>
+      </div>
+    
+      <div class="report-item">
+        <div class="report-date">3/7/2026, 7:50:10 AM</div>
+        <div class="report-comment">(mod_security) mod_security (id:210492) triggered by 119.235.221.127 (-): 1 in the last 300 secs; Ports: *; Direction: 1; Trigger: LF_MODSEC; Logs: [Sat Mar 07 02:49:52.116714 2026] [security2:error] [pid 11390:tid 11390] [client 119.235.221.127:0] ModSecurity: Access denied with code 403 (phase 1). Matched phrase &quot;/.git/&quot; at REQUEST_URI. [file &quot;/etc/apache2/conf.d/modsec_vendor_configs/comodo_apache/02_Global_Generic.conf&quot;] [line &quot;117&quot;] [id &quot;210492&quot;] [rev &quot;3&quot;] [severity &quot;CRITICAL&quot;] [tag &quot;CWAF&quot;] [tag &quot;Generic&quot;] [hostname &quot;cpcalendars.pixacast.com&quot;] [uri &quot;/.git/HEAD&quot;] [unique_id &quot;aavYoIPxbXndkvN42g_h3wAAABo&quot;]</div>
+        <div><span class="category-badge">Cat 18</span><span class="category-badge">Cat 19</span><span class="category-badge">Cat 21</span></div>
+        <div style="font-size:11px; color:#666; margin-top:4px;">
+          Reporter: United States of America
+        </div>
+      </div>
+    
+      <div class="report-item">
+        <div class="report-date">3/7/2026, 5:31:42 AM</div>
+        <div class="report-comment">Vulnerability Probe
+...</div>
+        <div><span class="category-badge">Cat 21</span></div>
+        <div style="font-size:11px; color:#666; margin-top:4px;">
+          Reporter: United States of America
+        </div>
+      </div>
+    
+      <div class="report-item">
+        <div class="report-date">3/6/2026, 1:08:20 PM</div>
+        <div class="report-comment">[FriMar0614:08:06.6085142026][security2:error][pid3172151:tid3172297][client119.235.221.127:0]ModSecurity:Accessdeniedwithcode403\(phase2\).Patternmatch\&quot;python-requests/\&quot;atREQUEST_HEADERS:User-Agent.[file\&quot;/etc/apache2/conf.d/modsec_rules/20_asl_useragents.conf\&quot;][line\&quot;203\&quot;][id\&quot;332039\&quot;][rev\&quot;4\&quot;][msg\&quot;Atomicorp.comWAFRules:SuspiciousUnusualUserAgent\(python-requests\).Disablethisruleifyouusepython-requests/.\&quot;][severity\&quot;CRITICAL\&quot;][hostname\&quot;domoticaswiss.ch\&quot;][uri\&quot;/api/index.php/v1/config/application\&quot;][unique_id\&quot;aarRts1nVgq5wyoZxLOKNwAAARY\&quot;]</div>
+        <div><span class="category-badge">Cat 14</span><span class="category-badge">Cat 18</span><span class="category-badge">Cat 21</span></div>
+        <div style="font-size:11px; color:#666; margin-top:4px;">
+          Reporter: Germany
+        </div>
+      </div>
+    
+      <div class="report-item">
+        <div class="report-date">3/6/2026, 7:06:27 AM</div>
+        <div class="report-comment">Joomla!.CMS.Webservice.API.index.php.Unauthorized.Access</div>
+        <div><span class="category-badge">Cat 18</span></div>
+        <div style="font-size:11px; color:#666; margin-top:4px;">
+          Reporter: United States of America
+        </div>
+      </div>
+    
+      <div class="report-item">
+        <div class="report-date">3/6/2026, 5:56:39 AM</div>
+        <div class="report-comment">119.235.221.127 - - [06/Mar/2026:05:56:14 +0000] &quot;GET /api/index.php/v1/config/application?public=true HTTP/1.1&quot; 301 5930 &quot;-&quot; &quot;python-requests/2.32.5&quot;</div>
+        <div><span class="category-badge">Cat 18</span><span class="category-badge">Cat 21</span></div>
+        <div style="font-size:11px; color:#666; margin-top:4px;">
+          Reporter: United Kingdom of Great Britain and Northern Ireland
+        </div>
+      </div>
+    
+      <div class="report-item">
+        <div class="report-date">3/6/2026, 3:03:49 AM</div>
+        <div class="report-comment">(mod_security) mod_security triggered on hostname [redacted] 119.235.221.127 (ID/Indonesia/-)</div>
+        <div><span class="category-badge">Cat 16</span></div>
+        <div style="font-size:11px; color:#666; margin-top:4px;">
+          Reporter: France
+        </div>
+      </div>
+    
+      <div class="report-item">
+        <div class="report-date">3/5/2026, 11:45:33 PM</div>
+        <div class="report-comment">Blocked by UFW (TCP on 80)
+Source port: 63435
+TTL: 116
+Packet length: 52
+TOS: 0x00
+
+This report (for 119.235.221.127) was generated by:
+https://github.com/sefinek/UFW-AbuseIPDB-Reporter</div>
+        <div><span class="category-badge">Cat 14</span><span class="category-badge">Cat 21</span></div>
+        <div style="font-size:11px; color:#666; margin-top:4px;">
+          Reporter: United States of America
+        </div>
+      </div>
+    
+      <div class="report-item">
+        <div class="report-date">3/5/2026, 7:23:38 PM</div>
+        <div class="report-comment">Firewall Blocked - Unauthorized Port Scanning
+...</div>
+        <div><span class="category-badge">Cat 14</span></div>
+        <div style="font-size:11px; color:#666; margin-top:4px;">
+          Reporter: Poland
+        </div>
+      </div>
+    
+      <div class="report-item">
+        <div class="report-date">3/5/2026, 6:03:02 PM</div>
+        <div class="report-comment">Web Server Enforcement Violation: Web Server Exposed Git Repository Information Disclosure
+Port:80</div>
+        <div><span class="category-badge">Cat 15</span><span class="category-badge">Cat 20</span></div>
+        <div style="font-size:11px; color:#666; margin-top:4px;">
+          Reporter: Canada
+        </div>
+      </div>
+    
+      <div class="report-item">
+        <div class="report-date">3/5/2026, 4:51:16 PM</div>
+        <div class="report-comment">Bot/Spam/Scrapper attack detected on www.handytreff.de - Score: -79.088 (Bad &lt; -10 / Very Bad &lt; -20 / Extreme &lt; -35)  | UA: python-requests/2.32.5</div>
+        <div><span class="category-badge">Cat 21</span><span class="category-badge">Cat 19</span></div>
+        <div style="font-size:11px; color:#666; margin-top:4px;">
+          Reporter: Germany
+        </div>
+      </div>
+    
+      <div class="report-item">
+        <div class="report-date">3/5/2026, 4:48:05 PM</div>
+        <div class="report-comment">Cloudflare WAF: Request Path: /.git/HEAD Request Query:  Host: foro.elhacker.net userAgent: Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:88.0) Gecko/20100101 Firefox/88.0 Action: block Source: firewallManaged ASN Description: CEPATNET-AS-ID PT Mora Telematika Indonesia Country: ID Method: GET Timestamp: 2026-03-05T16:48:05Z ruleId: 23548ee2b36547a1be09bb2c0550c529. Report generated by Cloudflare-WAF-to-AbuseIPDB (https://github.com/MHG-LAB/Cloudflare-WAF-to-AbuseIPDB).</div>
+        <div><span class="category-badge">Cat 15</span><span class="category-badge">Cat 16</span><span class="category-badge">Cat 21</span></div>
+        <div style="font-size:11px; color:#666; margin-top:4px;">
+          Reporter: Spain
+        </div>
+      </div>
+    
+      <div class="report-item">
+        <div class="report-date">3/5/2026, 2:06:57 PM</div>
+        <div class="report-comment">Access Violation Attempts - Multiple 403 Forbidden responses.</div>
+        <div><span class="category-badge">Cat 15</span><span class="category-badge">Cat 19</span><span class="category-badge">Cat 21</span></div>
+        <div style="font-size:11px; color:#666; margin-top:4px;">
+          Reporter: Czechia
+        </div>
+      </div>
+    
+      <div class="report-item">
+        <div class="report-date">3/5/2026, 10:03:20 AM</div>
+        <div class="report-comment">05/Mar/2026:10:58:02.872756 +0100Apache-Error: [file &quot;apache2_util.c&quot;] [line 275] [level 3] [client 119.235.221.127] ModSecurity: Warning. Matched phrase &quot;/.git/&quot; at REQUEST_FILENAME. [file &quot;/usr/share/modsecurity-crs/rules/REQUEST-930-APPLICATION-ATTACK-LFI.conf&quot;] [line &quot;125&quot;] [id &quot;930130&quot;] [msg &quot;Restricted File Access Attempt&quot;] [data &quot;Matched Data: /.git/ found within REQUEST_FILENAME: /.git/head&quot;] [severity &quot;CRITICAL&quot;] [ver &quot;OWASP_CRS/3.3.5&quot;] [tag &quot;application-multi&quot;] [tag &quot;language-multi&quot;] [tag &quot;platform-multi&quot;] [tag &quot;attack-lfi&quot;] [tag &quot;paranoia-level/1&quot;] [tag &quot;OWASP_CRS&quot;] [tag &quot;capec/1000/255/153/126&quot;] [tag &quot;PCI/6.5.4&quot;] [hostname &quot;familievandemaat.nl&quot;] [uri &quot;/.git/HEAD&quot;] [unique_id &quot;aalTqqe25xbfOrZx2jLIqAAAAAg&quot;]
+05/Mar/2026:10:58:02.872756 +0100Apache-Error: [file &quot;apache2_util.c&quot;] [line 275] [level 3] [client 119.235.221.127] ModSecurity: Warning. Operator GE matched 5 at TX:anomaly_score. [file &quot;/usr/share/modsecurity-crs/rules/REQUEST-949-BLOCKING-EVALUATION.conf&quot;] [line &quot;94&quot;] 
+...</div>
+        <div><span class="category-badge">Cat 21</span></div>
+        <div style="font-size:11px; color:#666; margin-top:4px;">
+          Reporter: Finland
+        </div>
+      </div>
+    
+      <div class="report-item">
+        <div class="report-date">3/4/2026, 5:54:41 PM</div>
+        <div class="report-comment">http-probing: /api/index.php/v1/config/application</div>
+        <div><span class="category-badge">Cat 21</span></div>
+        <div style="font-size:11px; color:#666; margin-top:4px;">
+          Reporter: Ireland
+        </div>
+      </div>
+    
+      <div class="report-item">
+        <div class="report-date">3/4/2026, 4:39:27 PM</div>
+        <div class="report-comment">AutoBlock: 🎯 Vulnerability Scanner (Non Decay-Based)</div>
+        <div><span class="category-badge">Cat 15</span><span class="category-badge">Cat 21</span></div>
+        <div style="font-size:11px; color:#666; margin-top:4px;">
+          Reporter: Canada
+        </div>
+      </div>
+    
+      <div class="report-item">
+        <div class="report-date">3/4/2026, 4:02:43 PM</div>
+        <div class="report-comment">Web Server Enforcement Violation: Web Server Exposed Git Repository Information Disclosure
+Port:80</div>
+        <div><span class="category-badge">Cat 15</span><span class="category-badge">Cat 20</span></div>
+        <div style="font-size:11px; color:#666; margin-top:4px;">
+          Reporter: Canada
+        </div>
+      </div>
+    
+      <div class="report-item">
+        <div class="report-date">3/4/2026, 3:21:25 PM</div>
+        <div class="report-comment">Cloudflare WAF: Request Path: /.git/HEAD Request Query:  Host: elhacker.net userAgent: Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:88.0) Gecko/20100101 Firefox/88.0 Action: block Source: firewallManaged ASN Description: CEPATNET-AS-ID PT Mora Telematika Indonesia Country: ID Method: GET Timestamp: 2026-03-04T15:21:25Z ruleId: 23548ee2b36547a1be09bb2c0550c529. Report generated by Cloudflare-WAF-to-AbuseIPDB (https://github.com/MHG-LAB/Cloudflare-WAF-to-AbuseIPDB).</div>
+        <div><span class="category-badge">Cat 15</span><span class="category-badge">Cat 16</span><span class="category-badge">Cat 21</span></div>
+        <div style="font-size:11px; color:#666; margin-top:4px;">
+          Reporter: Spain
+        </div>
+      </div>
+    
+      <div class="report-item">
+        <div class="report-date">3/4/2026, 2:55:42 PM</div>
+        <div class="report-comment">(mod_security) mod_security (id:210492) triggered by 119.235.221.127 (-): 1 in the last 300 secs; Ports: *; Direction: 1; Trigger: LF_MODSEC; Logs: [Wed Mar 04 09:55:25.835936 2026] [security2:error] [pid 19935:tid 19935] [client 119.235.221.127:0] ModSecurity: Access denied with code 403 (phase 1). Matched phrase &quot;/.git/&quot; at REQUEST_URI. [file &quot;/etc/apache2/conf.d/modsec_vendor_configs/comodo_apache/02_Global_Generic.conf&quot;] [line &quot;117&quot;] [id &quot;210492&quot;] [rev &quot;3&quot;] [severity &quot;CRITICAL&quot;] [tag &quot;CWAF&quot;] [tag &quot;Generic&quot;] [hostname &quot;eddysgroup.com&quot;] [uri &quot;/.git/HEAD&quot;] [unique_id &quot;aahH3Wzgm4ORY2eEL3Kb8wAAABk&quot;]</div>
+        <div><span class="category-badge">Cat 18</span><span class="category-badge">Cat 19</span><span class="category-badge">Cat 21</span></div>
+        <div style="font-size:11px; color:#666; margin-top:4px;">
+          Reporter: United States of America
+        </div>
+      </div>
+    
+      <div class="report-item">
+        <div class="report-date">3/4/2026, 10:34:19 AM</div>
+        <div class="report-comment">(mod_security) mod_security (id:210492) triggered by 119.235.221.127 (-): 1 in the last 300 secs; Ports: *; Direction: 1; Trigger: LF_MODSEC; Logs: [Wed Mar 04 05:34:03.290658 2026] [security2:error] [pid 25111:tid 25111] [client 119.235.221.127:62912] ModSecurity: Access denied with code 403 (phase 1). Matched phrase &quot;/.git/&quot; at REQUEST_URI. [file &quot;/etc/apache2/conf.d/modsec_vendor_configs/comodo_apache/02_Global_Generic.conf&quot;] [line &quot;117&quot;] [id &quot;210492&quot;] [rev &quot;3&quot;] [severity &quot;CRITICAL&quot;] [tag &quot;CWAF&quot;] [tag &quot;Generic&quot;] [hostname &quot;drgas.com&quot;] [uri &quot;/.git/HEAD&quot;] [unique_id &quot;aagKm909BK-ZznUGwxQDSQAAAAA&quot;]</div>
+        <div><span class="category-badge">Cat 18</span><span class="category-badge">Cat 19</span><span class="category-badge">Cat 21</span></div>
+        <div style="font-size:11px; color:#666; margin-top:4px;">
+          Reporter: United States of America
+        </div>
+      </div>
+    
+      <div class="report-item">
+        <div class="report-date">3/4/2026, 8:40:42 AM</div>
+        <div class="report-comment">[WedMar0409:40:26.7802452026][security2:error][pid470086:tid470194][client119.235.221.127:0]ModSecurity:Accessdeniedwithcode403\(phase2\).OperatorGEmatched5atTX:anomaly_score.[file\&quot;/etc/apache2/conf.d/modsec_vendor_configs/OWASP3/rules/REQUEST-949-BLOCKING-EVALUATION.conf\&quot;][line\&quot;94\&quot;][id\&quot;949110\&quot;][msg\&quot;InboundAnomalyScoreExceeded\(TotalScore:5\)\&quot;][severity\&quot;CRITICAL\&quot;][ver\&quot;OWASP_CRS/3.3.8\&quot;][tag\&quot;application-multi\&quot;][tag\&quot;language-multi\&quot;][tag\&quot;platform-multi\&quot;][tag\&quot;attack-generic\&quot;][hostname\&quot;domoticaswiss.ch\&quot;][uri\&quot;/.git/HEAD\&quot;][unique_id\&quot;aafv-t0W5oLffPtoNqvI2QAAAII\&quot;]</div>
+        <div><span class="category-badge">Cat 14</span><span class="category-badge">Cat 18</span><span class="category-badge">Cat 21</span></div>
+        <div style="font-size:11px; color:#666; margin-top:4px;">
+          Reporter: Germany
+        </div>
+      </div>
+    
+      <div class="report-item">
+        <div class="report-date">3/4/2026, 6:22:52 AM</div>
+        <div class="report-comment">(mod_security) mod_security (id:210492) triggered by 119.235.221.127 (-): 1 in the last 300 secs; Ports: *; Direction: 1; Trigger: LF_MODSEC; Logs: [Wed Mar 04 01:22:36.393992 2026] [security2:error] [pid 28862:tid 28862] [client 119.235.221.127:63162] ModSecurity: Access denied with code 403 (phase 1). Matched phrase &quot;/.git/&quot; at REQUEST_URI. [file &quot;/etc/apache2/conf.d/modsec_vendor_configs/comodo_apache/02_Global_Generic.conf&quot;] [line &quot;117&quot;] [id &quot;210492&quot;] [rev &quot;3&quot;] [severity &quot;CRITICAL&quot;] [tag &quot;CWAF&quot;] [tag &quot;Generic&quot;] [hostname &quot;digitalracemedia.com&quot;] [uri &quot;/.git/HEAD&quot;] [unique_id &quot;aafPrLI0AhZ8RWpDm0pQqwAAAAM&quot;]</div>
+        <div><span class="category-badge">Cat 18</span><span class="category-badge">Cat 19</span><span class="category-badge">Cat 21</span></div>
+        <div style="font-size:11px; color:#666; margin-top:4px;">
+          Reporter: United States of America
+        </div>
+      </div>
+    
+      <div class="report-item">
+        <div class="report-date">3/4/2026, 6:17:25 AM</div>
+        <div class="report-comment">ModSecurity rejected a query</div>
+        <div><span class="category-badge">Cat 19</span><span class="category-badge">Cat 21</span></div>
+        <div style="font-size:11px; color:#666; margin-top:4px;">
+          Reporter: Italy
+        </div>
+      </div>
+    
+      <div class="report-item">
+        <div class="report-date">3/4/2026, 5:24:27 AM</div>
+        <div class="report-comment">(mod_security) mod_security (id:210492) triggered by 119.235.221.127 (-): 1 in the last 300 secs; Ports: *; Direction: 1; Trigger: LF_MODSEC; Logs: [Wed Mar 04 00:24:12.835116 2026] [security2:error] [pid 26533:tid 26533] [client 119.235.221.127:63460] ModSecurity: Access denied with code 403 (phase 1). Matched phrase &quot;/.git/&quot; at REQUEST_URI. [file &quot;/etc/apache2/conf.d/modsec_vendor_configs/comodo_apache/02_Global_Generic.conf&quot;] [line &quot;117&quot;] [id &quot;210492&quot;] [rev &quot;3&quot;] [severity &quot;CRITICAL&quot;] [tag &quot;CWAF&quot;] [tag &quot;Generic&quot;] [hostname &quot;dmasoftlab.com&quot;] [uri &quot;/.git/HEAD&quot;] [unique_id &quot;aafB_C1ro1aISS4W6CXcnQAAAA0&quot;]</div>
+        <div><span class="category-badge">Cat 18</span><span class="category-badge">Cat 19</span><span class="category-badge">Cat 21</span></div>
+        <div style="font-size:11px; color:#666; margin-top:4px;">
+          Reporter: United States of America
+        </div>
+      </div>
+    
+      <div class="report-item">
+        <div class="report-date">3/4/2026, 1:33:57 AM</div>
+        <div class="report-comment">[04/Mar/2026:03:33:56 +0200] 177258803664.202721 119.235.221.127 61478 148.251.76.218 80
+[04/Mar/2026:03:33:57 +0200] 177258803714.365937 119.235.221.127 61496 148.251.76.218 443</div>
+        <div><span class="category-badge">Cat 21</span></div>
+        <div style="font-size:11px; color:#666; margin-top:4px;">
+          Reporter: Germany
+        </div>
+      </div>
+    
+      <div class="report-item">
+        <div class="report-date">3/3/2026, 8:45:09 PM</div>
+        <div class="report-comment">HACK</div>
+        <div><span class="category-badge">Cat 18</span></div>
+        <div style="font-size:11px; color:#666; margin-top:4px;">
+          Reporter: Israel
+        </div>
+      </div>
+    
+      <div class="report-item">
+        <div class="report-date">3/3/2026, 8:32:15 PM</div>
+        <div class="report-comment">LF_MODSEC: (mod_security) mod_security (id:1000001) triggered by 119.235.221.127 (ID/Indonesia/-): 1 in the last 3600 secs</div>
+        <div><span class="category-badge">Cat 21</span></div>
+        <div style="font-size:11px; color:#666; margin-top:4px;">
+          Reporter: Indonesia
+        </div>
+      </div>
+    
+      <div class="report-item">
+        <div class="report-date">3/3/2026, 8:24:22 PM</div>
+        <div class="report-comment">request_uri: /.git/HEAD -- automatic report --</div>
+        <div><span class="category-badge">Cat 18</span><span class="category-badge">Cat 15</span></div>
+        <div style="font-size:11px; color:#666; margin-top:4px;">
+          Reporter: United Kingdom of Great Britain and Northern Ireland
+        </div>
+      </div>
+    
+      <div class="report-item">
+        <div class="report-date">3/3/2026, 7:53:00 PM</div>
+        <div class="report-comment">2026-03-03 20:53:00 (CET) ~ Blocked by abusescan risk assessment</div>
+        <div><span class="category-badge">Cat 21</span></div>
+        <div style="font-size:11px; color:#666; margin-top:4px;">
+          Reporter: Netherlands
+        </div>
+      </div>
+    
+      <div class="report-item">
+        <div class="report-date">3/3/2026, 6:37:12 PM</div>
+        <div class="report-comment">Triggered Cloudflare WAF (firewallCustom) from ID.
+Action taken: BLOCK
+Protocol: HTTP/1.1 (GET method)
+Endpoint: /.git/HEAD
+UA: Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:88.0) Gecko/20100101 Firefox/88.0
+
+This report was generated by:
+https://github.com/sefinek/Cloudflare-WAF-To-AbuseIPDB</div>
+        <div><span class="category-badge">Cat 19</span></div>
+        <div style="font-size:11px; color:#666; margin-top:4px;">
+          Reporter: Finland
+        </div>
+      </div>
+    
+      <div class="report-item">
+        <div class="report-date">3/3/2026, 5:54:15 PM</div>
+        <div class="report-comment">Access Violation Attempts - Multiple 403 Forbidden responses.</div>
+        <div><span class="category-badge">Cat 15</span><span class="category-badge">Cat 19</span><span class="category-badge">Cat 21</span></div>
+        <div style="font-size:11px; color:#666; margin-top:4px;">
+          Reporter: Czechia
+        </div>
+      </div>
+    
+      <div class="report-item">
+        <div class="report-date">3/3/2026, 5:32:21 PM</div>
+        <div class="report-comment">[1:2610542] TGI HUNT gitrepo HTTP Probe ::: Port: 80/TCP</div>
+        <div><span class="category-badge">Cat 20</span></div>
+        <div style="font-size:11px; color:#666; margin-top:4px;">
+          Reporter: United States of America
+        </div>
+      </div>
+    
+      <div class="report-item">
+        <div class="report-date">3/3/2026, 3:00:56 PM</div>
+        <div class="report-comment">Triggered Cloudflare WAF from ID.
+Action taken: BLOCK
+ASN: 131111 (CEPATNET-AS-ID PT Mora Telematika Indonesia)
+Protocol: HTTP/1.1 (GET method)
+Endpoint: /.git/HEAD
+Timestamp: 2026-03-03T14:33:25Z
+User-Agent: Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:88.0) Gecko/20100101 Firefox/88.0</div>
+        <div><span class="category-badge">Cat 19</span></div>
+        <div style="font-size:11px; color:#666; margin-top:4px;">
+          Reporter: Germany
+        </div>
+      </div>
+    
+      <div class="report-item">
+        <div class="report-date">3/3/2026, 2:55:05 PM</div>
+        <div class="report-comment">Aggressive web scan</div>
+        <div><span class="category-badge">Cat 21</span></div>
+        <div style="font-size:11px; color:#666; margin-top:4px;">
+          Reporter: Germany
+        </div>
+      </div>
+    
+      <div class="report-item">
+        <div class="report-date">3/3/2026, 12:30:37 PM</div>
+        <div class="report-comment">Unauthorized connection attempt</div>
+        <div><span class="category-badge">Cat 14</span><span class="category-badge">Cat 15</span><span class="category-badge">Cat 20</span></div>
+        <div style="font-size:11px; color:#666; margin-top:4px;">
+          Reporter: Germany
+        </div>
+      </div>
+    
+      <div class="report-item">
+        <div class="report-date">3/3/2026, 12:14:39 PM</div>
+        <div class="report-comment"></div>
+        <div><span class="category-badge">Cat 15</span></div>
+        <div style="font-size:11px; color:#666; margin-top:4px;">
+          Reporter: Thailand
+        </div>
+      </div>
+    
+      <div class="report-item">
+        <div class="report-date">3/3/2026, 8:27:08 AM</div>
+        <div class="report-comment">(mod_security) mod_security (id:210492) triggered by 119.235.221.127 (-): 1 in the last 300 secs; Ports: *; Direction: 1; Trigger: LF_MODSEC; Logs: [Tue Mar 03 03:26:52.491651 2026] [security2:error] [pid 20635:tid 20635] [client 119.235.221.127:61653] ModSecurity: Access denied with code 403 (phase 1). Matched phrase &quot;/.git/&quot; at REQUEST_URI. [file &quot;/etc/apache2/conf.d/modsec_vendor_configs/comodo_apache/02_Global_Generic.conf&quot;] [line &quot;117&quot;] [id &quot;210492&quot;] [rev &quot;3&quot;] [severity &quot;CRITICAL&quot;] [tag &quot;CWAF&quot;] [tag &quot;Generic&quot;] [hostname &quot;cpanel.sahinozalit.com&quot;] [uri &quot;/.git/HEAD&quot;] [unique_id &quot;aaabTLsG-9QC2bYTtV_dBgAAAAo&quot;]</div>
+        <div><span class="category-badge">Cat 18</span><span class="category-badge">Cat 19</span><span class="category-badge">Cat 21</span></div>
+        <div style="font-size:11px; color:#666; margin-top:4px;">
+          Reporter: United States of America
+        </div>
+      </div>
+    
+      <div class="report-item">
+        <div class="report-date">3/3/2026, 8:01:41 AM</div>
+        <div class="report-comment">(mod_security) mod_security triggered on hostname [redacted] 119.235.221.127 (ID/Indonesia/-)</div>
+        <div><span class="category-badge">Cat 16</span></div>
+        <div style="font-size:11px; color:#666; margin-top:4px;">
+          Reporter: Germany
+        </div>
+      </div>
+    
+      <div class="report-item">
+        <div class="report-date">3/3/2026, 7:39:02 AM</div>
+        <div class="report-comment">(mod_security) mod_security (id:210492) triggered by 119.235.221.127 (-): 1 in the last 300 secs; Ports: *; Direction: 1; Trigger: LF_MODSEC; Logs: [Tue Mar 03 02:38:49.755149 2026] [security2:error] [pid 4490:tid 4490] [client 119.235.221.127:61302] ModSecurity: Access denied with code 403 (phase 1). Matched phrase &quot;/.git/&quot; at REQUEST_URI. [file &quot;/etc/apache2/conf.d/modsec_vendor_configs/comodo_apache/02_Global_Generic.conf&quot;] [line &quot;117&quot;] [id &quot;210492&quot;] [rev &quot;3&quot;] [severity &quot;CRITICAL&quot;] [tag &quot;CWAF&quot;] [tag &quot;Generic&quot;] [hostname &quot;cpanel.vaezi.com&quot;] [uri &quot;/.git/HEAD&quot;] [unique_id &quot;aaaQCZW5LFhJmAf4JienDAAAABA&quot;]</div>
+        <div><span class="category-badge">Cat 18</span><span class="category-badge">Cat 19</span><span class="category-badge">Cat 21</span></div>
+        <div style="font-size:11px; color:#666; margin-top:4px;">
+          Reporter: United States of America
+        </div>
+      </div>
+    
+      <div class="report-item">
+        <div class="report-date">3/3/2026, 7:21:08 AM</div>
+        <div class="report-comment">(mod_security) mod_security (id:210492) triggered by 119.235.221.127 (-): 1 in the last 300 secs; Ports: *; Direction: 1; Trigger: LF_MODSEC; Logs: [Tue Mar 03 02:20:53.015402 2026] [security2:error] [pid 9356:tid 9356] [client 119.235.221.127:61088] ModSecurity: Access denied with code 403 (phase 1). Matched phrase &quot;/.git/&quot; at REQUEST_URI. [file &quot;/etc/apache2/conf.d/modsec_vendor_configs/comodo_apache/02_Global_Generic.conf&quot;] [line &quot;117&quot;] [id &quot;210492&quot;] [rev &quot;3&quot;] [severity &quot;CRITICAL&quot;] [tag &quot;CWAF&quot;] [tag &quot;Generic&quot;] [hostname &quot;cpanel.garon.us&quot;] [uri &quot;/.git/HEAD&quot;] [unique_id &quot;aaaL1XKzcflVa43faSHcFAAAAA0&quot;]</div>
+        <div><span class="category-badge">Cat 18</span><span class="category-badge">Cat 19</span><span class="category-badge">Cat 21</span></div>
+        <div style="font-size:11px; color:#666; margin-top:4px;">
+          Reporter: United States of America
+        </div>
+      </div>
+    
+      <div class="report-item">
+        <div class="report-date">3/3/2026, 7:06:20 AM</div>
+        <div class="report-comment">Joomla!.CMS.Webservice.API.index.php.Unauthorized.Access</div>
+        <div><span class="category-badge">Cat 18</span></div>
+        <div style="font-size:11px; color:#666; margin-top:4px;">
+          Reporter: United States of America
+        </div>
+      </div>
+    
+      <div class="report-item">
+        <div class="report-date">3/3/2026, 6:54:35 AM</div>
+        <div class="report-comment">(mod_security) mod_security (id:210492) triggered by 119.235.221.127 (-): 1 in the last 300 secs; Ports: *; Direction: 1; Trigger: LF_MODSEC; Logs: [Tue Mar 03 01:54:20.699509 2026] [security2:error] [pid 13724:tid 13748] [client 119.235.221.127:61346] ModSecurity: Access denied with code 403 (phase 1). Matched phrase &quot;/.git/&quot; at REQUEST_URI. [file &quot;/etc/apache2/conf.d/modsec_vendor_configs/comodo_apache/02_Global_Generic.conf&quot;] [line &quot;117&quot;] [id &quot;210492&quot;] [rev &quot;3&quot;] [severity &quot;CRITICAL&quot;] [tag &quot;CWAF&quot;] [tag &quot;Generic&quot;] [hostname &quot;cpanel.filterchoice.com&quot;] [uri &quot;/.git/HEAD&quot;] [unique_id &quot;aaaFnFAlqzPoqGGu_8xQrgAAAFU&quot;]</div>
+        <div><span class="category-badge">Cat 18</span><span class="category-badge">Cat 19</span><span class="category-badge">Cat 21</span></div>
+        <div style="font-size:11px; color:#666; margin-top:4px;">
+          Reporter: United States of America
+        </div>
+      </div>
+    
+      <div class="report-item">
+        <div class="report-date">3/3/2026, 4:11:42 AM</div>
+        <div class="report-comment">(mod_security) mod_security (id:210492) triggered by 119.235.221.127 (-): 1 in the last 300 secs; Ports: *; Direction: 1; Trigger: LF_MODSEC; Logs: [Mon Mar 02 23:11:28.783248 2026] [security2:error] [pid 13325:tid 13325] [client 119.235.221.127:61094] ModSecurity: Access denied with code 403 (phase 1). Matched phrase &quot;/.git/&quot; at REQUEST_URI. [file &quot;/etc/apache2/conf.d/modsec_vendor_configs/comodo_apache/02_Global_Generic.conf&quot;] [line &quot;117&quot;] [id &quot;210492&quot;] [rev &quot;3&quot;] [severity &quot;CRITICAL&quot;] [tag &quot;CWAF&quot;] [tag &quot;Generic&quot;] [hostname &quot;cpanel.amoriotech.com&quot;] [uri &quot;/.git/HEAD&quot;] [unique_id &quot;aaZfcPBIo9UqQak26MzlpAAAABM&quot;]</div>
+        <div><span class="category-badge">Cat 18</span><span class="category-badge">Cat 19</span><span class="category-badge">Cat 21</span></div>
+        <div style="font-size:11px; color:#666; margin-top:4px;">
+          Reporter: United States of America
+        </div>
+      </div>
+    
+      <div class="report-item">
+        <div class="report-date">3/3/2026, 3:55:58 AM</div>
+        <div class="report-comment">(mod_security) mod_security (id:210492) triggered by 119.235.221.127 (-): 1 in the last 300 secs; Ports: *; Direction: 1; Trigger: LF_MODSEC; Logs: [Mon Mar 02 22:55:41.578431 2026] [security2:error] [pid 31665:tid 31665] [client 119.235.221.127:61078] ModSecurity: Access denied with code 403 (phase 1). Matched phrase &quot;/.git/&quot; at REQUEST_URI. [file &quot;/etc/apache2/conf.d/modsec_vendor_configs/comodo_apache/02_Global_Generic.conf&quot;] [line &quot;117&quot;] [id &quot;210492&quot;] [rev &quot;3&quot;] [severity &quot;CRITICAL&quot;] [tag &quot;CWAF&quot;] [tag &quot;Generic&quot;] [hostname &quot;cpanel.alitcogroup.com&quot;] [uri &quot;/.git/HEAD&quot;] [unique_id &quot;aaZbvXpoDEAflyvufkdQxAAAAAE&quot;]</div>
+        <div><span class="category-badge">Cat 18</span><span class="category-badge">Cat 19</span><span class="category-badge">Cat 21</span></div>
+        <div style="font-size:11px; color:#666; margin-top:4px;">
+          Reporter: United States of America
+        </div>
+      </div>
+    
+      <div class="report-item">
+        <div class="report-date">3/3/2026, 3:22:51 AM</div>
+        <div class="report-comment">(mod_security) mod_security (id:210492) triggered by 119.235.221.127 (-): 1 in the last 300 secs; Ports: *; Direction: 1; Trigger: LF_MODSEC; Logs: [Mon Mar 02 22:22:33.588367 2026] [security2:error] [pid 3666:tid 3666] [client 119.235.221.127:60441] ModSecurity: Access denied with code 403 (phase 1). Matched phrase &quot;/.git/&quot; at REQUEST_URI. [file &quot;/etc/apache2/conf.d/modsec_vendor_configs/comodo_apache/02_Global_Generic.conf&quot;] [line &quot;117&quot;] [id &quot;210492&quot;] [rev &quot;3&quot;] [severity &quot;CRITICAL&quot;] [tag &quot;CWAF&quot;] [tag &quot;Generic&quot;] [hostname &quot;cpanel.adultandchild.org&quot;] [uri &quot;/.git/HEAD&quot;] [unique_id &quot;aaZT-VPisP5kHZx_k5nMiAAAAAs&quot;]</div>
+        <div><span class="category-badge">Cat 18</span><span class="category-badge">Cat 19</span><span class="category-badge">Cat 21</span></div>
+        <div style="font-size:11px; color:#666; margin-top:4px;">
+          Reporter: United States of America
+        </div>
+      </div>
+    
+      <div class="report-item">
+        <div class="report-date">3/3/2026, 2:41:32 AM</div>
+        <div class="report-comment">(mod_security) mod_security (id:210492) triggered by 119.235.221.127 (-): 1 in the last 300 secs; Ports: *; Direction: 1; Trigger: LF_MODSEC; Logs: [Mon Mar 02 21:41:16.503733 2026] [security2:error] [pid 13998:tid 13998] [client 119.235.221.127:61069] ModSecurity: Access denied with code 403 (phase 1). Matched phrase &quot;/.git/&quot; at REQUEST_URI. [file &quot;/etc/apache2/conf.d/modsec_vendor_configs/comodo_apache/02_Global_Generic.conf&quot;] [line &quot;117&quot;] [id &quot;210492&quot;] [rev &quot;3&quot;] [severity &quot;CRITICAL&quot;] [tag &quot;CWAF&quot;] [tag &quot;Generic&quot;] [hostname &quot;cpanel.21north.com&quot;] [uri &quot;/.git/HEAD&quot;] [unique_id &quot;aaZKTNpJKAP0gFXZQaEjRAAAABc&quot;]</div>
+        <div><span class="category-badge">Cat 18</span><span class="category-badge">Cat 19</span><span class="category-badge">Cat 21</span></div>
+        <div style="font-size:11px; color:#666; margin-top:4px;">
+          Reporter: United States of America
+        </div>
+      </div>
+    
+      <div class="report-item">
+        <div class="report-date">3/3/2026, 1:17:45 AM</div>
+        <div class="report-comment">(mod_security) mod_security (id:210492) triggered by 119.235.221.127 (-): 1 in the last 300 secs; Ports: *; Direction: 1; Trigger: LF_MODSEC; Logs: [Mon Mar 02 20:17:31.438560 2026] [security2:error] [pid 4891:tid 4925] [client 119.235.221.127:64407] ModSecurity: Access denied with code 403 (phase 1). Matched phrase &quot;/.git/&quot; at REQUEST_URI. [file &quot;/etc/apache2/conf.d/modsec_vendor_configs/comodo_apache/02_Global_Generic.conf&quot;] [line &quot;117&quot;] [id &quot;210492&quot;] [rev &quot;3&quot;] [severity &quot;CRITICAL&quot;] [tag &quot;CWAF&quot;] [tag &quot;Generic&quot;] [hostname &quot;cpanel.bbpuertadelsol.com&quot;] [uri &quot;/.git/HEAD&quot;] [unique_id &quot;aaY2q0Jb4SVs8g7IjemHZwAAAFc&quot;]</div>
+        <div><span class="category-badge">Cat 18</span><span class="category-badge">Cat 19</span><span class="category-badge">Cat 21</span></div>
+        <div style="font-size:11px; color:#666; margin-top:4px;">
+          Reporter: United States of America
+        </div>
+      </div>
+    
+      <div class="report-item">
+        <div class="report-date">3/2/2026, 8:47:07 PM</div>
+        <div class="report-comment">(mod_security) mod_security (id:210492) triggered by 119.235.221.127 (-): 1 in the last 300 secs; Ports: *; Direction: 1; Trigger: LF_MODSEC; Logs: [Mon Mar 02 15:46:50.075958 2026] [security2:error] [pid 16244:tid 16244] [client 119.235.221.127:63155] ModSecurity: Access denied with code 403 (phase 1). Matched phrase &quot;/.git/&quot; at REQUEST_URI. [file &quot;/etc/apache2/conf.d/modsec_vendor_configs/comodo_apache/02_Global_Generic.conf&quot;] [line &quot;120&quot;] [id &quot;210492&quot;] [rev &quot;3&quot;] [severity &quot;CRITICAL&quot;] [tag &quot;CWAF&quot;] [tag &quot;Generic&quot;] [hostname &quot;coroneta.com&quot;] [uri &quot;/.git/HEAD&quot;] [unique_id &quot;aaX3Os8xdJzlmdOKYe92lQAAABY&quot;]</div>
+        <div><span class="category-badge">Cat 18</span><span class="category-badge">Cat 19</span><span class="category-badge">Cat 21</span></div>
+        <div style="font-size:11px; color:#666; margin-top:4px;">
+          Reporter: United States of America
+        </div>
+      </div>
+    
+      <div class="report-item">
+        <div class="report-date">3/2/2026, 6:08:31 PM</div>
+        <div class="report-comment">Web Attack (WordPress search). 30m ban</div>
+        <div><span class="category-badge">Cat 21</span></div>
+        <div style="font-size:11px; color:#666; margin-top:4px;">
+          Reporter: Chile
+        </div>
+      </div>
+    
+      <div class="report-item">
+        <div class="report-date">3/2/2026, 5:44:01 PM</div>
+        <div class="report-comment">(mod_security) mod_security (id:210492) triggered by 119.235.221.127 (-): 1 in the last 300 secs; Ports: *; Direction: 1; Trigger: LF_MODSEC; Logs: [Mon Mar 02 12:43:56.765120 2026] [security2:error] [pid 17901:tid 17901] [client 119.235.221.127:62651] ModSecurity: Access denied with code 403 (phase 1). Matched phrase &quot;/.git/&quot; at REQUEST_URI. [file &quot;/etc/apache2/conf.d/modsec_vendor_configs/comodo_apache/02_Global_Generic.conf&quot;] [line &quot;117&quot;] [id &quot;210492&quot;] [rev &quot;3&quot;] [severity &quot;CRITICAL&quot;] [tag &quot;CWAF&quot;] [tag &quot;Generic&quot;] [hostname &quot;coolerboxes.com&quot;] [uri &quot;/.git/HEAD&quot;] [unique_id &quot;aaXMXCZ0W5yVhGfPJrqGFAAAAAE&quot;]</div>
+        <div><span class="category-badge">Cat 18</span><span class="category-badge">Cat 19</span><span class="category-badge">Cat 21</span></div>
+        <div style="font-size:11px; color:#666; margin-top:4px;">
+          Reporter: United States of America
+        </div>
+      </div>
+    
+      </div>
+
+      <!-- Footer -->
+      <div class="footer">
+        Report generated: 3/13/2026, 2:03:15 AM | IP: 119.235.221.127
       </div>
     </div>
   
+    </div>
+  
+      </div>
+    </div>
   </div>
 </body>
 </html>
